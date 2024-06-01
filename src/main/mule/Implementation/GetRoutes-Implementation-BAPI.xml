@@ -1,0 +1,35 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<mule xmlns:http="http://www.mulesoft.org/schema/mule/http" xmlns="http://www.mulesoft.org/schema/mule/core"
+	xmlns:doc="http://www.mulesoft.org/schema/mule/documentation"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.mulesoft.org/schema/mule/core http://www.mulesoft.org/schema/mule/core/current/mule.xsd
+http://www.mulesoft.org/schema/mule/http http://www.mulesoft.org/schema/mule/http/current/mule-http.xsd">
+	<flow name="GetRoutes-Implementation-BAPIFlow" doc:id="d2620f03-d9eb-434a-938a-82380e4cfb04" >
+		<set-variable value="#[&quot;/api&quot; ++ &quot;/&quot; ++ vars.transportType ++ '/' ++ vars.companyName ++ &quot;/&quot; ++ &quot;routes&quot;]" doc:name="Set Variable" doc:id="6f1771c5-58b7-4b08-99d0-c0d60b628cf6" variableName="Routes" />
+		<choice doc:name="Choice" doc:id="1c220ba5-e302-48f5-bbcd-75de47d9f5dc" >
+			<when expression='#[vars.companyName == "TravelOnTip"]'>
+				<http:request method="GET" doc:name="Request" doc:id="7a598dd4-2552-415e-8d51-0b8281972aeb" config-ref="HTTP_Request_TravelOnTip_config" path="#[vars.Routes]" responseTimeout="40000">
+					<http:headers ><![CDATA[#[output application/java
+---
+{
+	transactionId : vars.transactionId
+}]]]></http:headers>
+				</http:request>
+				<logger level="INFO" doc:name="Logger" doc:id="ef57974f-cb63-4bb7-b402-48b41f2f4ce7" />
+			</when>
+			<when expression='vars.companyName == "FastGo"'>
+				<http:request method="GET" doc:name="Request" doc:id="6030c91d-2ef1-4548-887c-1bbef22bd68e" config-ref="HTTP_Request_TravelOnTip_config" path="#[vars.Routes]" responseTimeout="40000">
+					<http:headers ><![CDATA[#[output application/java
+---
+{
+	transactionId : vars.transactionId
+}]]]></http:headers>
+				</http:request>
+				<logger level="INFO" doc:name="Logger" doc:id="1e4dec6a-cdbb-4228-941e-350a279c3d0c" />
+			</when>
+			<otherwise >
+				<logger level="INFO" doc:name="Logger" doc:id="659c9b9a-1a07-4512-bd89-739344e8b222" />
+			</otherwise>
+		</choice>
+	</flow>
+</mule>

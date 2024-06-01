@@ -1,0 +1,35 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<mule xmlns:http="http://www.mulesoft.org/schema/mule/http" xmlns="http://www.mulesoft.org/schema/mule/core"
+	xmlns:doc="http://www.mulesoft.org/schema/mule/documentation"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.mulesoft.org/schema/mule/core http://www.mulesoft.org/schema/mule/core/current/mule.xsd
+http://www.mulesoft.org/schema/mule/http http://www.mulesoft.org/schema/mule/http/current/mule-http.xsd">
+	<flow name="GetSchedules-Implementation-BAPIFlow" doc:id="020bffd0-4967-480a-af90-d97cf9e944fb" >
+		<set-variable value="#[&quot;/api&quot; ++ &quot;/&quot; ++ vars.transportType ++ '/' ++ vars.companyName ++ &quot;/&quot; ++ &quot;schedules&quot;]" doc:name="Set Variable" doc:id="4c8d400a-79b2-4bae-b6e4-492d29b9ef40" variableName="Schedules"/>
+		<choice doc:name="Choice" doc:id="6f3dab24-1715-42f1-a9e6-0e520d26e1c1" >
+			<when expression='#[vars.companyName == "TravelOnTip"]'>
+				<http:request method="GET" doc:name="Request" doc:id="fa3e7e54-6092-429e-8a0d-4f0c26405974" config-ref="HTTP_Request_FastGo-config" path="#[vars.Schedules]" responseTimeout="40000">
+					<http:headers ><![CDATA[#[output application/java
+---
+{
+	transactionId : vars.transactionId
+}]]]></http:headers>
+				</http:request>
+				<logger level="INFO" doc:name="Logger" doc:id="7f28be33-3bb5-4a38-be18-9a8a291b1778" />
+			</when>
+			<when expression='#[vars.companyName == "FastGo"]'>
+				<http:request method="GET" doc:name="Request" doc:id="2bf5f85f-e7d1-4b56-a59c-82d6b26020a1" config-ref="HTTP_Request_FastGo-config" path="#[vars.Schedules]" responseTimeout="40000">
+					<http:headers ><![CDATA[#[output application/java
+---
+{
+	transactionId : vars.transactionId
+}]]]></http:headers>
+				</http:request>
+				<logger level="INFO" doc:name="Logger" doc:id="d302d6c1-750a-474a-adb1-585330f5058e" />
+			</when>
+			<otherwise >
+				<logger level="INFO" doc:name="Logger" doc:id="b5a8af35-0f7b-415d-8d42-4f0374962f5e" />
+			</otherwise>
+		</choice>
+	</flow>
+</mule>
