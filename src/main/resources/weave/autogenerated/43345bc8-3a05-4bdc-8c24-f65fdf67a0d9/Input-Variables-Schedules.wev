@@ -1,0 +1,4 @@
+%dw 2.0
+
+type auto_43345bc8_3a05_4bdc_8c24_f65fdf67a0d9_Input_Variables_Schedules = Any
+

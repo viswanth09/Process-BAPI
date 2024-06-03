@@ -1,33 +1,98 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
-<mule xmlns:http="http://www.mulesoft.org/schema/mule/http" xmlns="http://www.mulesoft.org/schema/mule/core"
-	xmlns:doc="http://www.mulesoft.org/schema/mule/documentation"
-	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.mulesoft.org/schema/mule/core http://www.mulesoft.org/schema/mule/core/current/mule.xsd
-http://www.mulesoft.org/schema/mule/http http://www.mulesoft.org/schema/mule/http/current/mule-http.xsd">
+<mule xmlns:ee="http://www.mulesoft.org/schema/mule/ee/core" xmlns:http="http://www.mulesoft.org/schema/mule/http"
+	xmlns="http://www.mulesoft.org/schema/mule/core"
+	xmlns:doc="http://www.mulesoft.org/schema/mule/documentation" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.mulesoft.org/schema/mule/core http://www.mulesoft.org/schema/mule/core/current/mule.xsd
+http://www.mulesoft.org/schema/mule/http http://www.mulesoft.org/schema/mule/http/current/mule-http.xsd
+http://www.mulesoft.org/schema/mule/ee/core http://www.mulesoft.org/schema/mule/ee/core/current/mule-ee.xsd">
+	<sub-flow name="GetRoutes-TravelOnTip" doc:id="df109ffc-e120-4bec-99c4-ccc402a88ece" >
+		<ee:cache doc:name="Cache" doc:id="d65a4d9e-8e18-4722-8578-ffacc9e441c3" cachingStrategy-ref="Caching_Strategy_Routes">
+			<http:request method="GET" doc:name="Request" doc:id="7a598dd4-2552-415e-8d51-0b8281972aeb" config-ref="HTTP_Request_TravelOnTip_config" path="#[vars.Routes]" responseTimeout="50000">
+					<http:headers><![CDATA[#[output application/java
+---
+{
+	transactionId : vars.transactionId
+}]]]></http:headers>
+				</http:request>
+			<ee:transform doc:name="Transform Message" doc:id="a2a4d636-9e98-42cd-9cd9-4b0c3f4c394d">
+					<ee:message>
+						<ee:set-payload><![CDATA[%dw 2.0
+output application/json
+---
+payload map{
+    companyCode: vars.companyName,
+    OriginLocation: {
+      LocationCode: $.originLocation.locationCode,
+      LocationDesc: "Beauna Vista Singapore"
+    },
+    destinationLocation: {
+      LocationCode: $.destinationLocation.locationCode,
+      LocationDesc: "Klong Malaysia"
+    }
+}]]></ee:set-payload>
+					</ee:message>
+				</ee:transform>
+			<logger level="INFO" doc:name="Logger" doc:id="ef57974f-cb63-4bb7-b402-48b41f2f4ce7" message="transformed result after the sucessful response" />
+		</ee:cache>
+	</sub-flow>
+	<sub-flow name="GetRoutes-FastGo" doc:id="cb2a16a3-fbfe-4faf-9255-c6c89a79fd6f">
+		<ee:cache doc:name="Cache" doc:id="1ecc5cee-bea5-4d6b-b196-f4efc5b231ff" cachingStrategy-ref="Caching_Strategy_Routes">
+			<http:request method="GET" doc:name="Request" doc:id="6030c91d-2ef1-4548-887c-1bbef22bd68e" config-ref="HTTP_Request_TravelOnTip_config" path="#[vars.Routes]" responseTimeout="50000">
+					<http:headers><![CDATA[#[output application/java
+---
+{
+	transactionId : vars.transactionId
+}]]]></http:headers>
+				</http:request>
+			<ee:transform doc:name="Transform Message" doc:id="8d723a3e-cae2-4e6c-b20e-69b499722682">
+					<ee:message>
+						<ee:set-payload><![CDATA[%dw 2.0
+output application/json
+---
+payload map{
+    companyCode: vars.companyName,
+    OriginLocation: {
+      LocationCode: $.originLocation.locationCode,
+      LocationDesc: "Beauna Vista Singapore"
+    },
+    destinationLocation: {
+      LocationCode: $.destinationLocation.locationCode,
+      LocationDesc: "Klong Malaysia"
+    }
+}]]></ee:set-payload>
+					</ee:message>
+				</ee:transform>
+			<logger level="INFO" doc:name="Logger" doc:id="1e4dec6a-cdbb-4228-941e-350a279c3d0c" message="transformed result after the sucessful response" />
+		</ee:cache>
+	</sub-flow>
 	<flow name="GetRoutes-Implementation-BAPIFlow" doc:id="d2620f03-d9eb-434a-938a-82380e4cfb04" >
 		<set-variable value="#[&quot;/api&quot; ++ &quot;/&quot; ++ vars.transportType ++ '/' ++ vars.companyName ++ &quot;/&quot; ++ &quot;routes&quot;]" doc:name="Set Variable" doc:id="6f1771c5-58b7-4b08-99d0-c0d60b628cf6" variableName="Routes" />
 		<choice doc:name="Choice" doc:id="1c220ba5-e302-48f5-bbcd-75de47d9f5dc" >
 			<when expression='#[vars.companyName == "TravelOnTip"]'>
-				<http:request method="GET" doc:name="Request" doc:id="7a598dd4-2552-415e-8d51-0b8281972aeb" config-ref="HTTP_Request_TravelOnTip_config" path="#[vars.Routes]" responseTimeout="40000">
-					<http:headers ><![CDATA[#[output application/java
----
-{
-	transactionId : vars.transactionId
-}]]]></http:headers>
-				</http:request>
-				<logger level="INFO" doc:name="Logger" doc:id="ef57974f-cb63-4bb7-b402-48b41f2f4ce7" />
+				<flow-ref doc:name="Flow Reference" doc:id="3cff4431-b523-4fc7-92a0-7cde285796ab" name="GetRoutes-TravelOnTip" />
 			</when>
 			<when expression='vars.companyName == "FastGo"'>
-				<http:request method="GET" doc:name="Request" doc:id="6030c91d-2ef1-4548-887c-1bbef22bd68e" config-ref="HTTP_Request_TravelOnTip_config" path="#[vars.Routes]" responseTimeout="40000">
-					<http:headers ><![CDATA[#[output application/java
----
-{
-	transactionId : vars.transactionId
-}]]]></http:headers>
-				</http:request>
-				<logger level="INFO" doc:name="Logger" doc:id="1e4dec6a-cdbb-4228-941e-350a279c3d0c" />
+				<flow-ref doc:name="Flow Reference" doc:id="d96725d5-f5e7-4cb2-b6c5-93d7b16075e7" name="GetRoutes-FastGo" />
 			</when>
 			<otherwise >
+				<scatter-gather doc:name="Scatter-Gather" doc:id="647e26dd-240b-4597-9293-fa1bef91eb91" >
+					<route >
+						<set-variable value="TravelOnTip" doc:name="Set Variable" doc:id="c7937345-834b-4e88-900a-77a2742ea9d6" variableName="companyName"/>
+						<flow-ref doc:name="Flow Reference" doc:id="d04434fc-83db-4152-85a0-6290fd93e753" name="GetRoutes-TravelOnTip"/>
+					</route>
+					<route >
+						<set-variable value="FastGo" doc:name="Set Variable" doc:id="39cc5ec1-c466-45bb-a453-9f0f9052c4af" variableName="companyName"/>
+						<flow-ref doc:name="Flow Reference" doc:id="b2e808ab-6bfa-4289-b751-812fe2ba40cd" name="GetRoutes-FastGo"/>
+					</route>
+				</scatter-gather>
+				<ee:transform doc:name="Transform Message" doc:id="c966c8f3-6700-4bb5-a801-03a39edd9fbe">
+							<ee:message>
+								<ee:set-payload><![CDATA[%dw 2.0
+output application/josn
+---
+payload]]></ee:set-payload>
+							</ee:message>
+						</ee:transform>
 				<logger level="INFO" doc:name="Logger" doc:id="659c9b9a-1a07-4512-bd89-739344e8b222" />
 			</otherwise>
 		</choice>

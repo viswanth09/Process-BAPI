@@ -1,0 +1,4 @@
+%dw 2.0
+
+type auto_df109ffc_e120_4bec_99c4_ccc402a88ece_Input_Payload = Array<{  companyCode: String,   OriginLocation: {    LocationCode: String,     LocationDesc: String,     _?: Any  },   destinationLocation: {    LocationCode: String,     LocationDesc: String,     _?: Any  },   _?: Any}> {"description": "this the sucess response example body properties."}
+

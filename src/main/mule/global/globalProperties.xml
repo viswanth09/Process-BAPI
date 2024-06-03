@@ -1,12 +1,14 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
-<mule xmlns:apikit="http://www.mulesoft.org/schema/mule/mule-apikit"
-	xmlns:http="http://www.mulesoft.org/schema/mule/http"
-	xmlns="http://www.mulesoft.org/schema/mule/core" xmlns:doc="http://www.mulesoft.org/schema/mule/documentation"
-	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-	xsi:schemaLocation="
+<mule xmlns:os="http://www.mulesoft.org/schema/mule/os"
+	xmlns:ee="http://www.mulesoft.org/schema/mule/ee/core"
+	xmlns:apikit="http://www.mulesoft.org/schema/mule/mule-apikit" xmlns:http="http://www.mulesoft.org/schema/mule/http"
+	xmlns="http://www.mulesoft.org/schema/mule/core"
+	xmlns:doc="http://www.mulesoft.org/schema/mule/documentation" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="
 http://www.mulesoft.org/schema/mule/mule-apikit http://www.mulesoft.org/schema/mule/mule-apikit/current/mule-apikit.xsd 
-http://www.mulesoft.org/schema/mule/http http://www.mulesoft.org/schema/mule/http/current/mule-http.xsd http://www.mulesoft.org/schema/mule/core http://www.mulesoft.org/schema/mule/core/current/mule.xsd">
+http://www.mulesoft.org/schema/mule/http http://www.mulesoft.org/schema/mule/http/current/mule-http.xsd http://www.mulesoft.org/schema/mule/core http://www.mulesoft.org/schema/mule/core/current/mule.xsd
+http://www.mulesoft.org/schema/mule/ee/core http://www.mulesoft.org/schema/mule/ee/core/current/mule-ee.xsd
+http://www.mulesoft.org/schema/mule/os http://www.mulesoft.org/schema/mule/os/current/mule-os.xsd">
     <http:listener-config name="retriveroutesandschedulesxpapi-httpListenerConfig">
         <http:listener-connection host="${http.listener.host}" port="${http.listener.port}" />
     </http:listener-config>
@@ -18,6 +20,9 @@ http://www.mulesoft.org/schema/mule/http http://www.mulesoft.org/schema/mule/htt
 	<http:request-config name="HTTP_Request_FastGo-config" doc:name="HTTP Request configuration" doc:id="54d1f818-c90b-4b4e-abd1-2082c584bfe4" >
 		<http:request-connection host="${http.requester.FastGo.host}" port="${http.requester.FastGo.port}" />
 	</http:request-config>
+	<os:object-store name="Object_store" doc:name="Object store" doc:id="e59d051c-2242-4337-8f31-fe5698ddfae4" maxEntries="100" entryTtl="2" entryTtlUnit="MINUTES"/>
+	<ee:object-store-caching-strategy name="Caching_Strategy_Schedules" doc:name="Caching Strategy" doc:id="076be66e-0612-4c6a-816e-f45ce87decee" keyGenerationExpression='#[vars.transportType ++ vars.companyName ++ "schedules"]' objectStore="Object_store"/>
+	<ee:object-store-caching-strategy name="Caching_Strategy_Routes" doc:name="Caching Strategy" doc:id="5a34cd4b-9c06-49c0-ab04-79bd202260a9" keyGenerationExpression='#[vars.transportType ++ vars.companyName ++ "routes"]' objectStore="Object_store" />
 
 	
 	
