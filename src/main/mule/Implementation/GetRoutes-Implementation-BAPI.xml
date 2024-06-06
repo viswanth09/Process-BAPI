@@ -7,6 +7,7 @@ http://www.mulesoft.org/schema/mule/http http://www.mulesoft.org/schema/mule/htt
 http://www.mulesoft.org/schema/mule/ee/core http://www.mulesoft.org/schema/mule/ee/core/current/mule-ee.xsd">
 	<sub-flow name="GetRoutes-TravelOnTip" doc:id="df109ffc-e120-4bec-99c4-ccc402a88ece" >
 		<ee:cache doc:name="Cache" doc:id="d65a4d9e-8e18-4722-8578-ffacc9e441c3" cachingStrategy-ref="Caching_Strategy_Routes">
+			<set-variable value="#[&quot;/api/&quot; ++ (vars.transportType default &quot;&quot;) ++ p('http.requester.TravelOnTip.routesPath')]" doc:name="Set Variable" doc:id="6e83b366-399d-4fb1-b0e0-c52809bb6424" variableName="Routes"/>
 			<http:request method="GET" doc:name="Request" doc:id="7a598dd4-2552-415e-8d51-0b8281972aeb" config-ref="HTTP_Request_TravelOnTip_config" path="#[vars.Routes]" responseTimeout="50000">
 					<http:headers><![CDATA[#[output application/java
 ---
@@ -37,6 +38,7 @@ payload map{
 	</sub-flow>
 	<sub-flow name="GetRoutes-FastGo" doc:id="cb2a16a3-fbfe-4faf-9255-c6c89a79fd6f">
 		<ee:cache doc:name="Cache" doc:id="1ecc5cee-bea5-4d6b-b196-f4efc5b231ff" cachingStrategy-ref="Caching_Strategy_Routes">
+			<set-variable value="#[&quot;/api/&quot; ++ (vars.transportType default &quot;&quot;) ++ p('http.requester.FastGo.routesPath')]" doc:name="Set Variable" doc:id="51a70c23-1743-4d52-9183-2654d30e3d7f" variableName="Routes"/>
 			<http:request method="GET" doc:name="Request" doc:id="6030c91d-2ef1-4548-887c-1bbef22bd68e" config-ref="HTTP_Request_TravelOnTip_config" path="#[vars.Routes]" responseTimeout="50000">
 					<http:headers><![CDATA[#[output application/java
 ---
@@ -66,7 +68,6 @@ payload map{
 		</ee:cache>
 	</sub-flow>
 	<flow name="GetRoutes-Implementation-BAPIFlow" doc:id="d2620f03-d9eb-434a-938a-82380e4cfb04" >
-		<set-variable value="#[&quot;/api&quot; ++ &quot;/&quot; ++ vars.transportType ++ '/' ++ vars.companyName ++ &quot;/&quot; ++ &quot;routes&quot;]" doc:name="Set Variable" doc:id="6f1771c5-58b7-4b08-99d0-c0d60b628cf6" variableName="Routes" />
 		<choice doc:name="Choice" doc:id="1c220ba5-e302-48f5-bbcd-75de47d9f5dc" >
 			<when expression='#[vars.companyName == "TravelOnTip"]'>
 				<flow-ref doc:name="Flow Reference" doc:id="3cff4431-b523-4fc7-92a0-7cde285796ab" name="GetRoutes-TravelOnTip" />
@@ -88,12 +89,12 @@ payload map{
 				<ee:transform doc:name="Transform Message" doc:id="c966c8f3-6700-4bb5-a801-03a39edd9fbe">
 							<ee:message>
 								<ee:set-payload><![CDATA[%dw 2.0
-output application/josn
+output application/json
 ---
-payload]]></ee:set-payload>
+payload[0].payload ++ payload[1].payload]]></ee:set-payload>
 							</ee:message>
 						</ee:transform>
-				<logger level="INFO" doc:name="Logger" doc:id="659c9b9a-1a07-4512-bd89-739344e8b222" />
+				<logger level="INFO" doc:name="Logger" doc:id="659c9b9a-1a07-4512-bd89-739344e8b222" message=" this is the payload after scatter gather tranformation"/>
 			</otherwise>
 		</choice>
 	</flow>
