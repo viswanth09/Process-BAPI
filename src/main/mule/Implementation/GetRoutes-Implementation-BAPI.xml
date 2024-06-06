@@ -19,18 +19,21 @@ http://www.mulesoft.org/schema/mule/ee/core http://www.mulesoft.org/schema/mule/
 					<ee:message>
 						<ee:set-payload><![CDATA[%dw 2.0
 output application/json
+var LocationMapping = readUrl("classpath://JsonData/LocationMappingData.json","application/json")
+var Location = LocationMapping.locationCode
 ---
 payload map{
     companyCode: vars.companyName,
     OriginLocation: {
       LocationCode: $.originLocation.locationCode,
-      LocationDesc: "Beauna Vista Singapore"
+      LocationDesc: (( LocationMapping filter(value, i) -> value.locationCode == $.originLocation.locationCode )).locationDescription[0]
     },
     destinationLocation: {
       LocationCode: $.destinationLocation.locationCode,
-      LocationDesc: "Klong Malaysia"
+      LocationDesc: (( LocationMapping filter(value, i) -> value.locationCode == $.destinationLocation.locationCode )).locationDescription[0]
     }
-}]]></ee:set-payload>
+}
+]]></ee:set-payload>
 					</ee:message>
 				</ee:transform>
 			<logger level="INFO" doc:name="Logger" doc:id="ef57974f-cb63-4bb7-b402-48b41f2f4ce7" message="transformed result after the sucessful response" />
@@ -50,18 +53,21 @@ payload map{
 					<ee:message>
 						<ee:set-payload><![CDATA[%dw 2.0
 output application/json
+var LocationMapping = readUrl("classpath://JsonData/LocationMappingData.json","application/json")
+var Location = LocationMapping.locationCode
 ---
 payload map{
     companyCode: vars.companyName,
     OriginLocation: {
       LocationCode: $.originLocation.locationCode,
-      LocationDesc: "Beauna Vista Singapore"
+      LocationDesc: (( LocationMapping filter(value, i) -> value.locationCode == $.originLocation.locationCode )).locationDescription[0]
     },
     destinationLocation: {
       LocationCode: $.destinationLocation.locationCode,
-      LocationDesc: "Klong Malaysia"
+      LocationDesc: (( LocationMapping filter(value, i) -> value.locationCode == $.destinationLocation.locationCode )).locationDescription[0]
     }
-}]]></ee:set-payload>
+}
+]]></ee:set-payload>
 					</ee:message>
 				</ee:transform>
 			<logger level="INFO" doc:name="Logger" doc:id="1e4dec6a-cdbb-4228-941e-350a279c3d0c" message="transformed result after the sucessful response" />
