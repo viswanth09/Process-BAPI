@@ -42,7 +42,7 @@ payload map{
 	<sub-flow name="GetRoutes-FastGo" doc:id="cb2a16a3-fbfe-4faf-9255-c6c89a79fd6f">
 		<ee:cache doc:name="Cache" doc:id="1ecc5cee-bea5-4d6b-b196-f4efc5b231ff" cachingStrategy-ref="Caching_Strategy_Routes">
 			<set-variable value="#[&quot;/api/&quot; ++ (vars.transportType default &quot;&quot;) ++ p('http.requester.FastGo.routesPath')]" doc:name="Set Variable" doc:id="51a70c23-1743-4d52-9183-2654d30e3d7f" variableName="Routes"/>
-			<http:request method="GET" doc:name="Request" doc:id="6030c91d-2ef1-4548-887c-1bbef22bd68e" config-ref="HTTP_Request_TravelOnTip_config" path="#[vars.Routes]" responseTimeout="50000">
+			<http:request method="GET" doc:name="Request" doc:id="6030c91d-2ef1-4548-887c-1bbef22bd68e" config-ref="HTTP_Request_FastGo-config" path="#[vars.Routes]" responseTimeout="50000">
 					<http:headers><![CDATA[#[output application/java
 ---
 {
@@ -59,12 +59,12 @@ var Location = LocationMapping.locationCode
 payload map{
     companyCode: vars.companyName,
     OriginLocation: {
-      LocationCode: $.originLocation.locationCode,
-      LocationDesc: (( LocationMapping filter(value, i) -> value.locationCode == $.originLocation.locationCode )).locationDescription[0]
+      LocationCode: $.arrivalLocationCode,
+      LocationDesc: (( LocationMapping filter(value, i) -> value.locationCode == $.arrivalLocationCode )).locationDescription[0]
     },
     destinationLocation: {
-      LocationCode: $.destinationLocation.locationCode,
-      LocationDesc: (( LocationMapping filter(value, i) -> value.locationCode == $.destinationLocation.locationCode )).locationDescription[0]
+      LocationCode: $.departureLocationCode,
+      LocationDesc: (( LocationMapping filter(value, i) -> value.locationCode == $.departureLocationCode )).locationDescription[0]
     }
 }
 ]]></ee:set-payload>

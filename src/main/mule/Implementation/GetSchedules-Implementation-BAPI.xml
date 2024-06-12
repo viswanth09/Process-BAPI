@@ -8,7 +8,7 @@ http://www.mulesoft.org/schema/mule/ee/core http://www.mulesoft.org/schema/mule/
 	<sub-flow name="GetSchedules-TravelOnTip" doc:id="43345bc8-3a05-4bdc-8c24-f65fdf67a0d9" >
 		<ee:cache doc:name="Cache" doc:id="9d134ddd-46ef-40ca-8ca8-aaa2d073a1cc" cachingStrategy-ref="Caching_Strategy_Schedules">
 			<set-variable value="#[&quot;/api/&quot; ++ (vars.transportType default &quot;&quot;) ++ p('http.requester.TravelOnTip.schedulesPath')]" doc:name="Set Variable" doc:id="87ffcc1a-20cd-4aa2-be69-e7039ba0dfa2" variableName="Schedules"/>
-			<http:request method="GET" doc:name="Request" doc:id="fa3e7e54-6092-429e-8a0d-4f0c26405974" config-ref="HTTP_Request_FastGo-config" path="#[vars.Schedules]" responseTimeout="50000">
+			<http:request method="GET" doc:name="Request" doc:id="fa3e7e54-6092-429e-8a0d-4f0c26405974" config-ref="HTTP_Request_TravelOnTip_config" path="#[vars.Schedules]" responseTimeout="50000">
 					<http:headers><![CDATA[#[output application/java
 ---
 {
@@ -28,12 +28,12 @@ payload map {
     departureDateTime: $.departureDateTime,
     travelRoute: {
       destinationLocation: {
-        LocationCode: $.toLocation,
-        LocationDesc: (( LocationMapping filter(value, i) -> value.locationCode == $.toLocation )).locationDescription[0]
+        LocationCode: $.travelRoute.destinationLoaction,
+        LocationDesc: (( LocationMapping filter(value, i) -> value.locationCode == $.travelRoute.destinationLoaction )).locationDescription[0]
       },
       OriginLocation: {
-        LocationCode: $.fromlocation,
-        LocationDesc: (( LocationMapping filter(value, i) -> value.locationCode == $.fromlocation )).locationDescription[0]
+        LocationCode: $.travelRoute.originLocation,
+        LocationDesc: (( LocationMapping filter(value, i) -> value.locationCode == $.travelRoute.originLocation )).locationDescription[0]
       }
     }
   }]]></ee:set-payload>
