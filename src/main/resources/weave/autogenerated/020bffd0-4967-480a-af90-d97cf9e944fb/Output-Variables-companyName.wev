@@ -1,0 +1,4 @@
+%dw 2.0
+
+type auto_020bffd0_4967_480a_af90_d97cf9e944fb_Output_Variables_companyName = Any
+
